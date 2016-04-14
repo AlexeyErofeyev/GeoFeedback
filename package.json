@@ -4,13 +4,13 @@
   "description": "",
   "main": "gulpfile.js",
   "scripts": {
-    "test": "echo \"Error: no test specified\" && exit 1"
+    "start": "gulp",
+    "alex"  : "NODE_ENV=FOOO gulp console"
   },
   "author": "",
   "license": "ISC",
   "devDependencies": {
     "autoprefixer": "^6.3.6",
-    "babel": "^6.5.2",
     "babel-core": "^6.7.6",
     "babel-loader": "^6.2.4",
     "babel-plugin-transform-es2015-modules-commonjs": "^6.7.4",
@@ -20,12 +20,10 @@
     "gulp-babel": "^6.1.2",
     "gulp-postcss": "^6.1.0",
     "gulp-stylus": "^2.3.1",
-    "path": "^0.12.7",
     "postcss-alias": "^0.2.2",
     "postcss-animation": "0.0.6",
     "postcss-pxtorem": "^3.3.1",
     "rupture": "^0.6.1",
-    "vinyl-named": "^1.1.0",
     "webpack": "^1.12.15",
     "webpack-stream": "^3.1.0"
   }

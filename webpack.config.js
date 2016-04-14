@@ -4,7 +4,6 @@
 const NODE_ENV = process.env.NODE_ENV || 'development';
 const webpack  = require('webpack');
 const path  = require('path');
-console.log(__dirname)
 module.exports = {
 	// context: __dirname + '/vendor/js/',// обсалютный путь до папки с модулями, чтоб постоянно не писать в их адрес /frontend
 	entry: './vendor/js/main.js',
@@ -43,7 +42,6 @@ module.exports = {
 	  loaders: [
 	    {
 	      test: /\.js$/,
-	      // include: "./vendor",
 	      exclude: /(node_modules|bower_components)/,
 	      loader: 'babel',
 	      query: {

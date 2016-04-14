@@ -41,7 +41,8 @@ new Promise(resolve => {//Ждем загрузки страницы
 .then(myMap => {//Вешаем слушатель событий
 
     return new Promise((resolve, reject) => {
-        let coords;
+        let coords = {},
+            adress = '';
         var objectManager = new ymaps.ObjectManager({
             // Чтобы метки начали кластеризоваться, выставляем опцию.
             clusterize: true,
@@ -50,40 +51,25 @@ new Promise(resolve => {//Ждем загрузки страницы
         });
 
 
-        var x = {
-                type: "Feature",
-                id: 0,
-                geometry: {
-                    type: "Point",
-                    coordinates: [59.85367273926185, 30.409485187402343]
-                },
-                 properties: {
-                    balloonContent: "Содержимое балуна",
-                    clusterCaption: "Еще одна метка", 
-                    hintContent: "Текст подсказки"
-                    }
-                }
-
-        objectManager.objects.options.set('preset', 'islands#greenDotIcon');
-        objectManager.clusters.options.set('preset', 'islands#greenClusterIcons');
-        objectManager.add(x);
+        // objectManager.objects.options.set('preset', 'islands#greenDotIcon');
+        // objectManager.clusters.options.set('preset', 'islands#greenClusterIcons');
+        // objectManager.add(x);
 
         myMap.events.add('click',e => {
-            if(e.target.tagName === 'YMAPS'){
-                let XandY = e.get('coords');
-                coords = {"x": XandY[0], "y": XandY[1]};
-            }                
+            let XandY = e.get('coords');
+            coords = {"x": XandY[0], "y": XandY[1]};
+
+            ymaps.geocode(XandY).then(function(res) {
+                adress = res.geoObjects.get(0).properties.get('text');
+            });                
             // myMap.geoObjects.add(objectManager);
 
         });
 
         window.addEventListener('click',e => {
-            console.log(e);
+            
         });
 
-        // btn.onclick = function(e) {
-        //     console.log(coords);
-        // }
     });
 
 })
