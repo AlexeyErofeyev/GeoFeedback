@@ -1,13 +1,94 @@
-@import url(https://fonts.googleapis.com/css?family=Roboto:400,300,700);
-@import 'variables'
-@import 'base'
+@import 'moduls&parts/fonts'
+@import 'moduls&parts/variables'
+@import 'moduls&parts/mixins'
+@import 'moduls&parts/alias'
+@import 'moduls&parts/normalize'
+@import 'moduls&parts/base'
 
 #map
 	width 100vw
 	height 100vh
-	border 1px solid black
-
 	
+.feedback
+	pos absolute
+	wid 380px
+	bgc white
+	bor-rad 10px
+	z-index 1000
 	
-
-
+	&_header
+		bgc orange
+		fs 12px
+		color white
+		pad 17px 35px
+		bor-rad 10px 10px 0 0
+		mar 0 0 10px 0
+	&_list
+		fs 16px
+		ls none
+		max-hei 140px
+		mar 0 10px 16px 10px
+		overflow-y scroll
+	&_item
+		pad 0 15px 5px 15px
+		mar 15px 5px 15px 0
+		bor-b 1px solid gray
+		&:last-child
+			bor-b none
+			mar 15px 0 0 0
+			
+	&_userInfo
+		color darkGray
+		fs 12px
+		mar 0 0 5px 0
+		& span
+			color gray
+			fs 12px
+			mar 0 0 0 10px
+	&_text
+		fs 15px
+		color gray
+	&_opinion
+		fs 16px
+		color orange
+		t-trans uppercase
+		mar 0 0 15px 0
+		pad 10px 0 0 15px
+		pos relative
+		&:before
+			psudo()
+			dis block
+			wid 90%
+			hei 1px
+			bgc darkGray
+			top 0px
+			left 50%
+			transform translate(-50%)
+	&_form
+		pad 15px
+		&:after
+			clearfix()
+	&_input, &_textarea
+		dis block
+		wid 100%
+		pad 10px 15px
+		bor-rad 20px
+		bor 1px solid silver
+		mar 0 0 14px 0
+		
+		&:hover
+			bor 1px solid darkGray
+	&_textarea
+		resize none
+		hei 130px
+	&_button
+		pad 7px 18px
+		bor-rad 10px
+		bor none
+		bgc orange
+		color white
+		float right
+		&:hover
+			b-shadow 3px 3px 2px rgba(125, 125, 125, .7)
+		&:active
+			b-shadow 1px 1px 1px rgba(125, 125, 125, 1)
