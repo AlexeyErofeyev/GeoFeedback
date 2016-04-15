@@ -2,33 +2,41 @@ import view from './view';
 import model from './model';
 
 let controller = {
+	showMap:(userPosition) => {
+		return view.showMap(userPosition);
+	},
+	userPosition:() => {
+		return model.userPosition();
+	},
 	newFeedback: (mapE) => {
 		view.showPopup();
-		let popup = document.getElementById('popup');
-
-		popup.addEventListener('click',popupE => {
-			if(popupE.target.classList.contains('feedback_button')){
-				console.log('feedback_button')
-
-				model
-					.setCoords(mapE)
-					.setAddress(mapE)
-					.setName()
-					.setPlace()
-					.setExperience()
-					.setDate()
-					.getObj();
-
-			} else if(popupE.target.classList.contains('feedback_close')){
-				console.log('feedback_close')
-			}
-		})
+		model
+            .setCoords(mapE)
+            .setAddress(mapE)
 	},
 	fieldErr:(field) => {
 		view.fieldErr(field);
 	},
 	fieldGood:(field) => {
 		view.fieldGood(field);
+	},
+	cleanFeedbackObj:() => {
+		model.cleanFeedbackObj();
+	},
+	hidePopup:() => {
+		view.hidePopup();
+	},
+	sendForm:(myMap) => {
+		model
+			.setName()
+            .setPlace()
+            .setExperience()
+            .setDate()
+            .sendForm(myMap)
+            model.getObj()
+	},
+	setNewMark:(arr, myMap) => {
+		view.setNewMark(arr, myMap);
 	}
 }
 

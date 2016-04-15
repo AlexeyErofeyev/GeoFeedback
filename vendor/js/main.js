@@ -1,10 +1,7 @@
 /**
- * Импорт всех объектов
+ * Импорт контроллера
  */
-
-import model from './modules/model';
 import controller from './modules/controller';
-import view from './modules/view';
 
 /**
  * Ждем загрузки страницы
@@ -22,7 +19,7 @@ new Promise(resolve => {
  * Передается массив
  */
 
-.then(model.userPosition.bind(null))
+.then(controller.userPosition.bind(null))
 
 /**
  * Показываем карту и 
@@ -30,10 +27,8 @@ new Promise(resolve => {
  */
 
 .then(userPosition => {
-    return view.showMap(userPosition);
+    return controller.showMap(userPosition);
 })
-
-
 
 .then(myMap => {//Вешаем слушатель событий
 
@@ -63,6 +58,17 @@ new Promise(resolve => {
 
         myMap.events.add('click',e => {
             controller.newFeedback(e);
+        });
+
+        let sendBtn   = document.getElementById('sendBtn');
+        let hidePopup = document.getElementById('hidePopup');
+        
+        sendBtn.addEventListener('click', e => {
+            controller.sendForm(myMap);
+        });
+
+        hidePopup.addEventListener('click',e => {
+            controller.hidePopup();
         });
 
     });

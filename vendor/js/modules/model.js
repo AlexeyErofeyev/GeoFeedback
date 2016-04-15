@@ -53,8 +53,8 @@ let model = {
 		let XandY = e.get('coords');
 
 		ymaps.geocode(XandY).then(function(res) {
-            let adress = res.geoObjects.get(0).properties.get('text');
-            model.feedbackObj.review.adress = adress;
+            let address = res.geoObjects.get(0).properties.get('text');
+            model.feedbackObj.review.address = address;
         });
 
         return model;
@@ -159,24 +159,57 @@ let model = {
 		}
 		return true;
 	},
-	sendForm:() => {
+	sendForm:(myMap) => {
 		new Promise(resolve => {
 			let xhr = new XMLHttpRequest();
-			xhr.open('POST', model.feedbackObj, true);
+			xhr.open('POST', 'http://localhost:3000/', true);
 
 			if(model.checkForm){
-				xhr.send(model.feedbackObj);
+				xhr.send(JSON.stringify(model.feedbackObj));
 
 				xhr.addEventListener('load',(e) => {
-					console.log()
+					resolve(JSON.parse(xhr.responseText))
 				});
 			} 		    
+		}).then((data) => {
+			return model.setMarkArr(data)
+		}).then((arr) => {
+			controller.setNewMark(arr, myMap);
 		})
+	},
+
+	cleanFeedbackObj:() => {
+		model.feedbackObj = {
+			op:'add',
+			review:{}
+		};
 	},
 	getObj:() => {
 		console.log(model.feedbackObj);
+	},
+	setMarkArr:(arr) => {
+		return new Promise(resolve => {
+				// console.log(arr);
+			let newArr = [];
+			for(let i = 0, l = arr.length; i < l ;i++){
+				newArr[i] = {
+					"type": "Feature",
+					"id": i,
+					"geometry": {
+						"type": "Point", 
+						"coordinates": [arr[i].coords.x, arr[i].coords.y]
+					}, 
+					"properties": {
+						"balloonContent": arr[i].text,  
+						"hintContent": arr[i].place
+					}
+				}			
+			}
+			resolve(newArr);
+			
+		});
 	}
 
-}
+}//model!!!!
 
 export default model;
