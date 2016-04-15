@@ -44,7 +44,7 @@ gulp.task('stylus',() => {
     let processors=[
         alias,
         animation,
-        autoprefixer({browsers: ['last 11 versions']})
+        autoprefixer({browsers: ['last 2 versions']})
     ];
 
     if(NODE_ENV === 'production'){
@@ -78,8 +78,8 @@ gulp.task('imagemin',() => {
 
 //BrowserSync
 gulp.task('watch',() => {
-    gulp.watch('./vendor/index.html', ['html',browserSync.reload]);
-    gulp.watch('./vendor/css/**/*.styl', ['stylus',browserSync.reload]);
+    gulp.watch('./vendor/index.html', ['html', browserSync.reload]);
+    gulp.watch('./vendor/css/**/*.styl', ['stylus', browserSync.reload]);
     gulp.watch('./vendor/js/**/*.js', ['js',browserSync.reload]);
 });
 

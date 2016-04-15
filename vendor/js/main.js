@@ -1,73 +1,68 @@
-import Geo from './moduls/geo';
+/**
+ * Импорт всех объектов
+ */
 
+import model from './modules/model';
+import controller from './modules/controller';
+import view from './modules/view';
 
-new Promise(resolve => {//Ждем загрузки страницы
+/**
+ * Ждем загрузки страницы
+ */
+new Promise(resolve => {
     if (document.readyState === 'complete') {
         resolve();
     } else {
         window.onload = resolve;
     }
 })
-.then(() => {// Узнаем координаты пользователя
+/**
+ * узнаем координаты пользователя 
+ * и передаем в следующий .then().
+ * Передается массив
+ */
 
-    return new Promise((resolve, reject) => {
-        let userPosition = new Geo;
-        userPosition.getPos(resolve);
-    });
+.then(model.userPosition.bind(null))
 
+/**
+ * Показываем карту и 
+ * передаем ее в следующий .then()
+ */
+
+.then(userPosition => {
+    return view.showMap(userPosition);
 })
-.then(userPosition => {//Показываем карту
-
-    return new Promise((resolve, reject) => {
-        var myMap;
-
-        function init () {
-            myMap = new ymaps.Map('map', {
-                center: userPosition,
-                zoom: 10
-            }, {
-                searchControlProvider: 'yandex#search'
-            });
-
-            resolve(myMap);
-        }
-
-        ymaps.ready(init);
 
 
-    });
 
-})
 .then(myMap => {//Вешаем слушатель событий
 
     return new Promise((resolve, reject) => {
-        let coords = {},
-            adress = '';
-        var objectManager = new ymaps.ObjectManager({
-            // Чтобы метки начали кластеризоваться, выставляем опцию.
-            clusterize: true,
-            // ObjectManager принимает те же опции, что и кластеризатор.
-            gridSize: 32
-        });
+        // var objectManager = new ymaps.ObjectManager({
+        //     // Чтобы метки начали кластеризоваться, выставляем опцию.
+        //     clusterize: true,
+        //     // ObjectManager принимает те же опции, что и кластеризатор.
+        //     gridSize: 32
+        // });
 
 
         // objectManager.objects.options.set('preset', 'islands#greenDotIcon');
         // objectManager.clusters.options.set('preset', 'islands#greenClusterIcons');
         // objectManager.add(x);
 
+        // myMap.events.add('click',e => {
+        //     let XandY = e.get('coords');
+        //     coords = {"x": XandY[0], "y": XandY[1]};
+
+        //     ymaps.geocode(XandY).then(function(res) {
+        //         adress = res.geoObjects.get(0).properties.get('text');
+        //     });                
+        //     // myMap.geoObjects.add(objectManager);
+
+        // });
+
         myMap.events.add('click',e => {
-            let XandY = e.get('coords');
-            coords = {"x": XandY[0], "y": XandY[1]};
-
-            ymaps.geocode(XandY).then(function(res) {
-                adress = res.geoObjects.get(0).properties.get('text');
-            });                
-            // myMap.geoObjects.add(objectManager);
-
-        });
-
-        window.addEventListener('click',e => {
-            
+            controller.newFeedback(e);
         });
 
     });
@@ -75,7 +70,8 @@ new Promise(resolve => {//Ждем загрузки страницы
 })
 
 .catch(function(e) {
-    alert('Ошибка: ' + e.message);
+    alert('Косяк!!!@@$');
+    console.log('Ошибка: ' + e);
 });
 
 
