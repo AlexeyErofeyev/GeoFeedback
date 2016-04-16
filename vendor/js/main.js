@@ -26,54 +26,15 @@ new Promise(resolve => {
  * передаем ее в следующий .then()
  */
 
-.then(userPosition => {
-    return controller.showMap(userPosition);
-})
+.then(userPosition => controller.showMap.call(null, userPosition))
 
-.then(myMap => {//Вешаем слушатель событий
+.then(myMap => controller.addAllMarks.call(null, myMap))
 
-    return new Promise((resolve, reject) => {
-        // var objectManager = new ymaps.ObjectManager({
-        //     // Чтобы метки начали кластеризоваться, выставляем опцию.
-        //     clusterize: true,
-        //     // ObjectManager принимает те же опции, что и кластеризатор.
-        //     gridSize: 32
-        // });
+/**
+ * Добавляем слушатели событий
+ */
 
-
-        // objectManager.objects.options.set('preset', 'islands#greenDotIcon');
-        // objectManager.clusters.options.set('preset', 'islands#greenClusterIcons');
-        // objectManager.add(x);
-
-        // myMap.events.add('click',e => {
-        //     let XandY = e.get('coords');
-        //     coords = {"x": XandY[0], "y": XandY[1]};
-
-        //     ymaps.geocode(XandY).then(function(res) {
-        //         adress = res.geoObjects.get(0).properties.get('text');
-        //     });                
-        //     // myMap.geoObjects.add(objectManager);
-
-        // });
-
-        myMap.events.add('click',e => {
-            controller.newFeedback(e);
-        });
-
-        let sendBtn   = document.getElementById('sendBtn');
-        let hidePopup = document.getElementById('hidePopup');
-        
-        sendBtn.addEventListener('click', e => {
-            controller.sendForm(myMap);
-        });
-
-        hidePopup.addEventListener('click',e => {
-            controller.hidePopup();
-        });
-
-    });
-
-})
+.then(myMap => controller.appEvents.call(null, myMap))
 
 .catch(function(e) {
     alert('Косяк!!!@@$');

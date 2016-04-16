@@ -20,12 +20,12 @@ let model = {
 	userPosition:() => {
 		return new Promise((resolve, reject) => {
 			if(navigator.geolocation){
-		        return navigator.geolocation.getCurrentPosition(function (pos){
-		            resolve([pos.coords.latitude ,pos.coords.longitude]);
-		        });
-		    } else {
-		        throw new Error('Ваш браузер не поддерживает геолокацию');
-		    }
+				return navigator.geolocation.getCurrentPosition(function (pos){
+					resolve([pos.coords.latitude ,pos.coords.longitude]);
+				});
+			} else {
+				throw new Error('Ваш браузер не поддерживает геолокацию');
+			}
 		});//return new Promise
 	},
 /**
@@ -53,11 +53,39 @@ let model = {
 		let XandY = e.get('coords');
 
 		ymaps.geocode(XandY).then(function(res) {
-            let address = res.geoObjects.get(0).properties.get('text');
-            model.feedbackObj.review.address = address;
-        });
+			let address = res.geoObjects.get(0).properties.get('text');
+			model.feedbackObj.review.address = address;
+		});
 
-        return model;
+		return model;
+	},
+
+	findComments:(e) => {
+		let XandY = e.get('coords');
+		let getObj = {
+			op:'get',
+			address:""
+		}
+
+		ymaps.geocode(XandY).then((res) => {
+			return new Promise((resolve) => {
+
+			let address = res.geoObjects.get(0).properties.get('text');
+			getObj.address = address;
+			resolve(address);
+			})
+		}).then((address) => {
+				let xhr = new XMLHttpRequest();
+
+				xhr.open('POST', 'http://localhost:3000/', true);
+				xhr.send(JSON.stringify(getObj));
+				console.log(getObj)
+				xhr.addEventListener('load',(e) => {
+					controller.showComments(JSON.parse(xhr.responseText),address)
+				});
+
+			})
+
 	},
 /**
  * Устанавливает поле 
@@ -111,18 +139,18 @@ let model = {
  * 
  * @return {model}
  */
- 	setDate:() => {
- 		let date    = new Date();
- 		let year    = date.getFullYear();
- 		let month   = date.getMonth() + 1;
- 		let day     = date.getDate();
- 		let hour    = date.getHours();
- 		let minutes = date.getMinutes();
- 		let seconds = date.getSeconds();
+	setDate:() => {
+		let date    = new Date();
+		let year    = date.getFullYear();
+		let month   = date.getMonth() + 1;
+		let day     = date.getDate();
+		let hour    = date.getHours();
+		let minutes = date.getMinutes();
+		let seconds = date.getSeconds();
 
- 		model.feedbackObj.review.date = year+'.'+month+'.'+day+' '+hour+':'+minutes+':'+ seconds;
- 		return model;
- 	},
+		model.feedbackObj.review.date = year+'.'+month+'.'+day+' '+hour+':'+minutes+':'+ seconds;
+		return model;
+	},
 /**
  * Используется для проверки
  * полей ввода
@@ -168,12 +196,33 @@ let model = {
 				xhr.send(JSON.stringify(model.feedbackObj));
 
 				xhr.addEventListener('load',(e) => {
+					console.log('объект с сервера', JSON.parse(xhr.responseText))
 					resolve(JSON.parse(xhr.responseText))
 				});
 			} 		    
 		}).then((data) => {
 			return model.setMarkArr(data)
 		}).then((arr) => {
+			controller.addAllMarks(myMap);
+		})
+	},
+
+	getAllMarks:(myMap) => {
+		return new Promise(resolve => {
+			let xhr = new XMLHttpRequest();
+			xhr.open('post', 'http://localhost:3000/', true);
+
+			xhr.send(JSON.stringify({"op":"all"}));
+
+			xhr.addEventListener('load',(e) => {
+				// console.log('Все объекты с сервера', JSON.parse(xhr.responseText))
+				resolve(JSON.parse(xhr.responseText))
+			});
+						
+		}).then((data) => {
+			return model.setAllMarksArr(data)
+		}).then((arr) => {
+			console.log(arr)
 			controller.setNewMark(arr, myMap);
 		})
 	},
@@ -187,23 +236,37 @@ let model = {
 	getObj:() => {
 		console.log(model.feedbackObj);
 	},
-	setMarkArr:(arr) => {
+	setMarkArr:(arr, addres) => {
 		return new Promise(resolve => {
-				// console.log(arr);
+			console.log(arr);
 			let newArr = [];
 			for(let i = 0, l = arr.length; i < l ;i++){
 				newArr[i] = {
 					"type": "Feature",
-					"id": i,
 					"geometry": {
 						"type": "Point", 
 						"coordinates": [arr[i].coords.x, arr[i].coords.y]
 					}, 
 					"properties": {
+						"addres": addres || "",
+						"name": arr[i].name,
 						"balloonContent": arr[i].text,  
 						"hintContent": arr[i].place
 					}
 				}			
+			}
+			resolve(newArr);
+			
+		});
+	},
+	setAllMarksArr:(obj) => {
+		return new Promise(resolve => {
+			let newArr = [];
+			for(let key in obj){
+				model.setMarkArr(obj[key], key)
+				.then(arr => {
+					newArr.push(...arr);
+				})			
 			}
 			resolve(newArr);
 			

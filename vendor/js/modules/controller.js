@@ -9,10 +9,15 @@ let controller = {
 		return model.userPosition();
 	},
 	newFeedback: (mapE) => {
-		view.showPopup();
 		model
-            .setCoords(mapE)
-            .setAddress(mapE)
+			.setCoords(mapE)
+			.setAddress(mapE);
+
+		model.findComments(mapE);
+		view.showPopup();
+	},
+	showComments:(comments, address) => {
+		view.showComments(comments, address);
 	},
 	fieldErr:(field) => {
 		view.fieldErr(field);
@@ -29,15 +34,49 @@ let controller = {
 	sendForm:(myMap) => {
 		model
 			.setName()
-            .setPlace()
-            .setExperience()
-            .setDate()
-            .sendForm(myMap)
-            model.getObj()
+			.setPlace()
+			.setExperience()
+			.setDate()
+			.sendForm(myMap);
 	},
 	setNewMark:(arr, myMap) => {
 		view.setNewMark(arr, myMap);
+	},
+	addAllMarks:(myMap) => {
+		return new Promise(resolve => {
+			model.getAllMarks(myMap);
+			resolve(myMap);
+		})
+	},
+	appEvents:(myMap) => {
+		let sendBtn   = document.getElementById('sendBtn');
+		let hidePopup = document.getElementById('hidePopup');
+
+		function mapEvents() {
+			myMap.events.add('click',e => {
+				controller.newFeedback(e);
+			});
+		};
+
+		function popupEvents() {
+			sendBtn.addEventListener('click', e => {
+
+				controller.sendForm(myMap);
+				controller.hidePopup();
+
+			});
+
+			hidePopup.addEventListener('click',e => {
+				controller.hidePopup();
+			});
+		};
+
+		return (function init() {
+					mapEvents();
+					popupEvents();
+				})();
 	}
-}
+
+}//controller!!!
 
 export default controller;

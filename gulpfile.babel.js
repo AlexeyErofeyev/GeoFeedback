@@ -23,8 +23,6 @@ import webpackConfig from './webpack.config';
 import plumber  from 'gulp-plumber';
 import imagemin from 'gulp-imagemin';
 
-
-
 const NODE_ENV = process.env.NODE_ENV || 'development';
 const browserSync = require('browser-sync').create(); 
 //Service
@@ -80,7 +78,9 @@ gulp.task('imagemin',() => {
 gulp.task('watch',() => {
     gulp.watch('./vendor/index.html', ['html', browserSync.reload]);
     gulp.watch('./vendor/css/**/*.styl', ['stylus', browserSync.reload]);
-    gulp.watch('./vendor/js/**/*.js', ['js',browserSync.reload]);
+    gulp.watch('./vendor/js/**/*.js', ['js',() => {
+        setTimeout(browserSync.reload.bind(null),250)
+    }]);
 });
 
 gulp.task('server',() => {

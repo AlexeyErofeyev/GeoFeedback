@@ -2,7 +2,7 @@ import controller from './controller';
 
 let view = {
 	showMap:(userPosition) => {
-		console.log(1)
+		console.log(userPosition)
 		return new Promise((resolve, reject) => {
 
 	        let myMap;
@@ -13,6 +13,7 @@ let view = {
 	                zoom: 10
 	            }, {
 	                searchControlProvider: 'yandex#search'
+
 	            });
 
 	            resolve(myMap);
@@ -65,17 +66,84 @@ let view = {
 		field.value = '';
 	},
 	setNewMark:(arr, myMap) => {
-		console.log('УСТАНОВКА НОВОЙ МАРКИ')
-		let objectManager = new ymaps.ObjectManager({
+
+		var objectManager = new ymaps.ObjectManager({
             clusterize: true,
-            gridSize: 32
+            geoObjectOpenBalloonOnClick: true,
+            clusterOpenBalloonOnClick: false
         });
-		console.log(arr)
 		
 		objectManager.objects.options.set('preset', 'islands#greenDotIcon');
         objectManager.clusters.options.set('preset', 'islands#greenClusterIcons');
         objectManager.add(arr);
         myMap.geoObjects.add(objectManager);
+        // view.setBallon(arr, myMap);
+	},
+
+	showComments: (comments, address) => {
+		let feedback_header = document.getElementById('feedback_header');
+		let feedback_list   = document.getElementById('feedback_list');
+		let li = [];
+		feedback_header.innerHTML = address;
+		if(comments.length){
+			comments.forEach((item, i, arr) => {
+				li.push( '<li class="feedback_item">'+
+				'<h4 class="feedback_userInfo">'+item.name+
+				'<span>'+item.place+' '+returnDate(item.date)+'</span></h4>'+
+				'<p class="feedback_text">'+item.text+'</p></li>')
+			})
+
+			feedback_list.innerHTML = li.join()
+		} else {
+			feedback_list.innerHTML = '<li class="feedback_item">По данному адресу нет отзывов.</li>'
+		}
+
+		function returnDate(time) {
+			let date = new Date(time);
+
+			let day   = date.getDate();
+			let month = date.getMonth();
+			let year  = date.getFullYear();
+
+			return day+'.'+month+'.'+year;
+
+		}
+	},
+
+	setBallon:(arr, myMap) => {
+
+		let customItemContentLayout = ymaps.templateLayoutFactory.createClass(
+        	'<h2 class=ballon_header>{{ properties.balloonContentHeader|raw }}</h2>' +
+            '<div class=ballon_body>{{ properties.balloonContentBody|raw }}</div>' +
+            '<div class=ballon_footer>{{ properties.balloonContentFooter|raw }}</div>'
+	    );//customItemContentLayout
+
+	    let clusterer = new ymaps.Clusterer({
+	        clusterDisableClickZoom: true,
+	        clusterOpenBalloonOnClick: true,
+	        clusterBalloonContentLayout: 'cluster#balloonCarousel',
+	        clusterBalloonPanelMaxMapArea: 0,
+	        clusterBalloonContentLayoutWidth: 200,
+	        clusterBalloonContentLayoutHeight: 130,
+	        clusterBalloonPagerSize: 5
+	    });//clusterer
+
+	    let placemarks = [];
+	    for (var i = 0, l = arr.length; i < l; i++) {
+	        let placemark = new ymaps.Placemark(arr[i].geometry.coordinates, {
+	            balloonContentHeader: arr[i].properties.hintContent,
+	            balloonContentBody: arr[i].properties.balloonContent,
+	            balloonContentFooter: arr[i].properties.name
+	        });
+	        placemarks.push(placemark);
+	    }
+
+	    clusterer.add(placemarks);
+	    myMap.geoObjects.add(clusterer);
+
+	    clusterer.balloon.open(clusterer.getClusters()[0]);
+		console.log('УСТАНОВКА BALOON закончена')
+
 	}
 }
 

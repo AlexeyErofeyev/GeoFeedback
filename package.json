@@ -4,8 +4,9 @@
   "description": "Маленькое приложение позволяющее оставлять отзывы на карте, убийца Foursquare",
   "main": "gulpfile.babel.js",
   "scripts": {
-    "dev": "NODE_ENV=development gulp",
-    "prod": "NODE_ENV=production gulp"
+    "dev" : "NODE_ENV=development gulp",
+    "prod": "NODE_ENV=production gulp",
+    "stat": "webpack --json --profile >statistics.json"
   },
   "repository": {
     "type": "git",
