@@ -1,33 +1,46 @@
 import controller from './controller';
 
 let view = {
+/**
+ * Метод для отображения карты
+ * @param  {Массив} userPosition [description: координаты пользователя]
+ * @return {[Promise]}[description: resolve передает дальше карту]
+ */
 	showMap:(userPosition) => {
-		console.log(userPosition)
 		return new Promise((resolve, reject) => {
 
-	        let myMap;
+			let myMap;
 
-	        function init () {
-	            myMap = new ymaps.Map('map', {
-	                center: userPosition,
-	                zoom: 10
-	            }, {
-	                searchControlProvider: 'yandex#search'
+			function init () {
+				myMap = new ymaps.Map('map', {
+					center: userPosition,
+					zoom: 10
+				}, {
+					searchControlProvider: 'yandex#search'
 
-	            });
+				});
 
-	            resolve(myMap);
-	        }
-	        ymaps.ready(init);
+				resolve(myMap);
+			}
+			ymaps.ready(init);
 
-	    });//return new Promise
+		});//return new Promise
 	},
+/**
+ * Метод для отображения 
+ * окна popup с формой ввода
+ * отзыва
+ */
 
 	showPopup:() => {
 		let popup = document.getElementById('popup');
 		popup.style.display = 'block';
 	},
 
+/**
+ * Метод для очистки
+ * и скрытия popup
+ */
 	hidePopup:() => {
 		let popup          = document.getElementById('popup');
 		let userName       = document.getElementById('userName');
@@ -42,7 +55,11 @@ let view = {
 		controller.cleanFeedbackObj();
 
 	},
-
+/**
+ * Метод для подсветки
+ * полей с ошибкой
+ * @param  {String} field [description: принимает id поля которое проверяет]
+ */
 	fieldErr:(field) => {
 		field.style.borderColor = 'red';
 
@@ -58,28 +75,85 @@ let view = {
 			}
 		});
 	},
+/**
+ * Метод для подсветки правельно
+ * заполненых полей ввода
+ * @param  {String} field [description: принимает id поля которое проверяет]
+ */
 	fieldGood:(field) => {
 		field.style.borderColor = 'green';
 	},
+/**
+ * Метод для приведения подсветки
+ * поля к стандартному значению
+ * @param  {String} field [description: принимает id поля которое проверяет]
+ */
 	fieldStandart:(field) => {
 		field.style.borderColor = "#c4c4c4";
 		field.value = '';
 	},
+/**
+ * Метод для установки новой метки
+ * @param  {Array} arr   [description: В массиве один объект, 
+ * в котором координаты и остальная информация о метке ]
+ * @param  {Object} myMap [description: Карта]
+ */
 	setNewMark:(arr, myMap) => {
-
-		var objectManager = new ymaps.ObjectManager({
-            clusterize: true,
-            geoObjectOpenBalloonOnClick: true,
-            clusterOpenBalloonOnClick: false
-        });
-		
-		objectManager.objects.options.set('preset', 'islands#greenDotIcon');
-        objectManager.clusters.options.set('preset', 'islands#greenClusterIcons');
-        objectManager.add(arr);
-        myMap.geoObjects.add(objectManager);
-        // view.setBallon(arr, myMap);
+		let clusterer = view.clusterer()().clusterer;
+	    clusterer.removeAll();
+		controller.addAllMarks(myMap);
 	},
+/**
+ * Метод устанавливает все метки на карте
+ * @param  {Array} arr   [description: Массив с объектами содержащими
+ * информацию о метке]
+ * @param  {Object} myMap [description: Карта]
+ */
+	setAllMark:(arr, myMap) => {		
+		let clusterer = view.clusterer()().clusterer;
+		let geoObjects = [];
+		var myCollection = new ymaps.GeoObjectCollection();
 
+		for(var i = 0, len = arr.length; i < len; i++) {
+	        myCollection.add(new ymaps.Placemark(arr[i].geometry.coordinates));
+			clusterer.add(new ymaps.Placemark(arr[i].geometry.coordinates));
+	    }
+
+		myMap.geoObjects.add(clusterer);
+	},
+/**
+ * Кластеризатор, подробнее
+ * на https://tech.yandex.ru/maps/doc/jsapi/2.0/ref/reference/Clusterer-docpage
+ */
+	clusterer:() => {
+		let instance;
+
+		function init() {
+			return instance ||(function() {
+				return{
+					clusterer: clusterer
+				}
+			})()	
+		};
+
+		let clusterer = new ymaps.Clusterer({
+			preset: 'twirl#lightblueIcon',
+			groupByCoordinates: false,
+			clusterDisableClickZoom: false,
+			options:{
+				openBalloonOnClick: false
+			}
+		});
+
+		return init;
+	},
+/**
+ * Метод для отображения кометариев
+ * в окне popup.
+ * @param  {Array} comments [description: Массив содержит все комментарии 
+ * по данному адресу на карте]
+ * @param  {String} address  [description: Адрес]
+ */
 	showComments: (comments, address) => {
 		let feedback_header = document.getElementById('feedback_header');
 		let feedback_list   = document.getElementById('feedback_list');
@@ -93,57 +167,25 @@ let view = {
 				'<p class="feedback_text">'+item.text+'</p></li>')
 			})
 
-			feedback_list.innerHTML = li.join()
+			feedback_list.innerHTML = li.join('')
 		} else {
 			feedback_list.innerHTML = '<li class="feedback_item">По данному адресу нет отзывов.</li>'
 		}
-
+/**
+ * Функция для установки даты озыва
+ * @param  {Number} time [description: Время в миллисекундах]
+ * @return {String}      [description: Строка типа "15.11.2015"]
+ */
 		function returnDate(time) {
 			let date = new Date(time);
 
 			let day   = date.getDate();
-			let month = date.getMonth();
+			let month = date.getMonth() + 1;
 			let year  = date.getFullYear();
 
 			return day+'.'+month+'.'+year;
 
 		}
-	},
-
-	setBallon:(arr, myMap) => {
-
-		let customItemContentLayout = ymaps.templateLayoutFactory.createClass(
-        	'<h2 class=ballon_header>{{ properties.balloonContentHeader|raw }}</h2>' +
-            '<div class=ballon_body>{{ properties.balloonContentBody|raw }}</div>' +
-            '<div class=ballon_footer>{{ properties.balloonContentFooter|raw }}</div>'
-	    );//customItemContentLayout
-
-	    let clusterer = new ymaps.Clusterer({
-	        clusterDisableClickZoom: true,
-	        clusterOpenBalloonOnClick: true,
-	        clusterBalloonContentLayout: 'cluster#balloonCarousel',
-	        clusterBalloonPanelMaxMapArea: 0,
-	        clusterBalloonContentLayoutWidth: 200,
-	        clusterBalloonContentLayoutHeight: 130,
-	        clusterBalloonPagerSize: 5
-	    });//clusterer
-
-	    let placemarks = [];
-	    for (var i = 0, l = arr.length; i < l; i++) {
-	        let placemark = new ymaps.Placemark(arr[i].geometry.coordinates, {
-	            balloonContentHeader: arr[i].properties.hintContent,
-	            balloonContentBody: arr[i].properties.balloonContent,
-	            balloonContentFooter: arr[i].properties.name
-	        });
-	        placemarks.push(placemark);
-	    }
-
-	    clusterer.add(placemarks);
-	    myMap.geoObjects.add(clusterer);
-
-	    clusterer.balloon.open(clusterer.getClusters()[0]);
-		console.log('УСТАНОВКА BALOON закончена')
-
 	}
 }
 

@@ -59,7 +59,11 @@ let model = {
 
 		return model;
 	},
-
+/**
+ * Метод для получения всех комментариев 
+ * по данному адресу
+ * @param  {Event} e [description: Событие клика по карте]
+ */
 	findComments:(e) => {
 		let XandY = e.get('coords');
 		let getObj = {
@@ -79,7 +83,6 @@ let model = {
 
 				xhr.open('POST', 'http://localhost:3000/', true);
 				xhr.send(JSON.stringify(getObj));
-				console.log(getObj)
 				xhr.addEventListener('load',(e) => {
 					controller.showComments(JSON.parse(xhr.responseText),address)
 				});
@@ -187,6 +190,10 @@ let model = {
 		}
 		return true;
 	},
+/**
+ * Отправка данных формы на сервер
+ * @param  {Object} myMap [description: Карта]
+ */
 	sendForm:(myMap) => {
 		new Promise(resolve => {
 			let xhr = new XMLHttpRequest();
@@ -196,17 +203,24 @@ let model = {
 				xhr.send(JSON.stringify(model.feedbackObj));
 
 				xhr.addEventListener('load',(e) => {
-					console.log('объект с сервера', JSON.parse(xhr.responseText))
+					
 					resolve(JSON.parse(xhr.responseText))
 				});
 			} 		    
-		}).then((data) => {
+		})
+		.then((data) => {
 			return model.setMarkArr(data)
-		}).then((arr) => {
-			controller.addAllMarks(myMap);
+		})
+		.then((arr) => {
+			controller.setNewMark(arr,myMap);
 		})
 	},
-
+/**
+ * Метод для получения всех
+ * меток на карте
+ * @param  {Object} myMap [description: Карта]
+ * @return {[type]}       [description]
+ */
 	getAllMarks:(myMap) => {
 		return new Promise(resolve => {
 			let xhr = new XMLHttpRequest();
@@ -215,30 +229,35 @@ let model = {
 			xhr.send(JSON.stringify({"op":"all"}));
 
 			xhr.addEventListener('load',(e) => {
-				// console.log('Все объекты с сервера', JSON.parse(xhr.responseText))
+
 				resolve(JSON.parse(xhr.responseText))
 			});
 						
 		}).then((data) => {
 			return model.setAllMarksArr(data)
 		}).then((arr) => {
-			console.log(arr)
-			controller.setNewMark(arr, myMap);
+			controller.setAllMark(arr, myMap);
 		})
 	},
-
+/**
+ * Метод для очистки отправляемого на сервер объекта
+ * @return {[type]} [description]
+ */
 	cleanFeedbackObj:() => {
 		model.feedbackObj = {
 			op:'add',
 			review:{}
 		};
 	},
-	getObj:() => {
-		console.log(model.feedbackObj);
-	},
+/**
+ * Метод для создания массива
+ * с форматом для яндекс карт
+ * @param  {Array} arr    [description: Массив с объектом пришедшим от сервера]
+ * @param  {String} addres [description: Адресс]
+ */
 	setMarkArr:(arr, addres) => {
 		return new Promise(resolve => {
-			console.log(arr);
+
 			let newArr = [];
 			for(let i = 0, l = arr.length; i < l ;i++){
 				newArr[i] = {
@@ -259,6 +278,12 @@ let model = {
 			
 		});
 	},
+/**
+ * Метод для формирования массива
+ * объектов для отображения на карте
+ * @param  {Object} obj [description: ]
+ * @return {[type]}     [description]
+ */
 	setAllMarksArr:(obj) => {
 		return new Promise(resolve => {
 			let newArr = [];

@@ -6,7 +6,7 @@
   "scripts": {
     "dev" : "NODE_ENV=development gulp",
     "prod": "NODE_ENV=production gulp",
-    "stat": "webpack --json --profile >statistics.json"
+    "stat": "webpack --json --profile >stat.json"
   },
   "repository": {
     "type": "git",
