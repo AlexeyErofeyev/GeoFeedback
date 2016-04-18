@@ -1,0 +1,40 @@
+0 info it worked if it ends with ok
+1 verbose cli [ '/usr/bin/nodejs', '/usr/bin/npm', 'run', 'geo' ]
+2 info using npm@2.15.1
+3 info using node@v4.4.3
+4 verbose run-script [ 'pregeo', 'geo', 'postgeo' ]
+5 info pregeo geo_feedback@1.0.0
+6 info geo geo_feedback@1.0.0
+7 verbose unsafe-perm in lifecycle true
+8 info geo_feedback@1.0.0 Failed to exec geo script
+9 verbose stack Error: geo_feedback@1.0.0 geo: `parallelshell 'npm run dev' 'npm run server'`
+9 verbose stack spawn ENOENT
+9 verbose stack     at ChildProcess.<anonymous> (/usr/lib/node_modules/npm/lib/utils/spawn.js:17:16)
+9 verbose stack     at emitTwo (events.js:87:13)
+9 verbose stack     at ChildProcess.emit (events.js:172:7)
+9 verbose stack     at maybeClose (internal/child_process.js:827:16)
+9 verbose stack     at Process.ChildProcess._handle.onexit (internal/child_process.js:211:5)
+10 verbose pkgid geo_feedback@1.0.0
+11 verbose cwd /home/alexnova/Рабочий стол/GeoFeedback
+12 error Linux 3.19.0-58-generic
+13 error argv "/usr/bin/nodejs" "/usr/bin/npm" "run" "geo"
+14 error node v4.4.3
+15 error npm  v2.15.1
+16 error file sh
+17 error code ELIFECYCLE
+18 error errno ENOENT
+19 error syscall spawn
+20 error geo_feedback@1.0.0 geo: `parallelshell 'npm run dev' 'npm run server'`
+20 error spawn ENOENT
+21 error Failed at the geo_feedback@1.0.0 geo script 'parallelshell 'npm run dev' 'npm run server''.
+21 error This is most likely a problem with the geo_feedback package,
+21 error not with npm itself.
+21 error Tell the author that this fails on your system:
+21 error     parallelshell 'npm run dev' 'npm run server'
+21 error You can get information on how to open an issue for this project with:
+21 error     npm bugs geo_feedback
+21 error Or if that isn't available, you can get their info via:
+21 error
+21 error     npm owner ls geo_feedback
+21 error There is likely additional logging output above.
+22 verbose exit [ 1, true ]

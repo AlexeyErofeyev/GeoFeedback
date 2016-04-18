@@ -22,6 +22,7 @@ import webpackConfig from './webpack.config';
 //Service
 import plumber  from 'gulp-plumber';
 import imagemin from 'gulp-imagemin';
+import jsDoc    from 'gulp-jsdoc';
 
 const NODE_ENV = process.env.NODE_ENV || 'development';
 const browserSync = require('browser-sync').create(); 
@@ -73,6 +74,15 @@ gulp.task('imagemin',() => {
     .pipe(gulp.dest('./app/images/'));
 });
 //imagemin 
+
+//jsDOC
+// gulp.task('jsDoc',() => {
+//     gulp.src('./vendor/js/*.js')
+//         .pipe(jsDoc('./documentation-output'))
+//     .pipe(gulp.dest('./app/js/'));
+// });
+//jsDOC
+
 
 //BrowserSync
 gulp.task('watch',() => {
