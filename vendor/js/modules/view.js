@@ -115,18 +115,11 @@ let view = {
 		let clusterer = view.clusterer()().clusterer;
 		let geoObjects = [];
 		var myCollection = new ymaps.GeoObjectCollection();
-			console.log(arr)
+		
 		for(var i = 0, len = arr.length; i < len; i++) {
 	        myCollection.add(new ymaps.Placemark(arr[i].geometry.coordinates));
 			clusterer.add(new ymaps.Placemark(arr[i].geometry.coordinates));
 	    }
-
-	    // myMap.geoObjects.events.add('click',e => {
-	    // 	let geoObject = e.get('target'),
-	    // 	position = e.get('globalPixels');
-	    //     console.log(geoObject.get('balloonInfo'))
-	    //     e.get('target').balloon.open(position,'jhgjhgjhfjf');
-	    // })
 
 		myMap.geoObjects.add(clusterer);
 	},
@@ -195,10 +188,6 @@ let view = {
 			return day+'.'+month+'.'+year;
 
 		}
-	},
-
-	ballon:(myMap) => {
-		let balloon = new ymaps.Balloon(myMap);
 	}
 }
 
