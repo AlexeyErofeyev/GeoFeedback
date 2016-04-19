@@ -65,6 +65,7 @@ let model = {
  * @param  {Event} e [description: Событие клика по карте]
  */
 	findComments:(e) => {
+
 		let XandY = e.get('coords');
 		let getObj = {
 			op:'get',

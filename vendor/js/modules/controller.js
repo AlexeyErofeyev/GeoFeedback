@@ -24,6 +24,7 @@ let controller = {
  * @param  {Event} mapE [description: Событие клика по карте]
  */
 	newFeedback: (mapE) => {
+
 		model
 			.setCoords(mapE)
 			.setAddress(mapE);

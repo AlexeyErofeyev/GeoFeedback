@@ -103,4 +103,4 @@ gulp.task('server',() => {
 
 
 
-gulp.task('default',['html','stylus','js','watch','server']);
+gulp.task('default',['html','stylus','js','imagemin','watch','server']);
