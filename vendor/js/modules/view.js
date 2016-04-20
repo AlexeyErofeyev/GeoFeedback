@@ -114,13 +114,22 @@ let view = {
 	setAllMark:(arr, myMap) => {		
 		let clusterer = view.clusterer()().clusterer;
 		let geoObjects = [];
-		var myCollection = new ymaps.GeoObjectCollection();
-		
-		for(var i = 0, len = arr.length; i < len; i++) {
-	        myCollection.add(new ymaps.Placemark(arr[i].geometry.coordinates));
-			clusterer.add(new ymaps.Placemark(arr[i].geometry.coordinates));
-	    }
+		let myCollection = new ymaps.GeoObjectCollection();
 
+
+		console.log(arr)
+
+		var placemarks =[];
+		for(var i = 0, len = arr.length; i < len; i++) {
+			 var placemark = new ymaps.Placemark(arr[i].geometry.coordinates, {
+            // Устаналиваем данные, которые будут отображаться в балуне.
+            balloonContentHeader: arr[i].properties.balloonContentHeader,
+            balloonContentBody: arr[i].properties.balloonContentBody,
+            balloonContentFooter: arr[i].properties.balloonContentFooter
+        });
+        	placemarks.push(placemark);
+	    }
+	    clusterer.add(placemarks)
 		myMap.geoObjects.add(clusterer);
 	},
 /**
@@ -128,6 +137,15 @@ let view = {
  * на https://tech.yandex.ru/maps/doc/jsapi/2.0/ref/reference/Clusterer-docpage
  */
 	clusterer:() => {
+		var customItemContentLayout = ymaps.templateLayoutFactory.createClass(
+	        // Флаг "raw" означает, что данные вставляют "как есть" без экранирования html.
+	        '<h2 class=ballon_header>{{ properties.balloonContentHeader|raw }}</h2>' +
+	            '<div class=ballon_body>{{ properties.balloonContentBody|raw }}</div>' +
+	            '<div class=ballon_footer>{{ properties.balloonContentFooter|raw }}</div>'
+	    );
+
+
+
 		let instance;
 
 		function init() {
@@ -141,10 +159,14 @@ let view = {
 		let clusterer = new ymaps.Clusterer({
 			preset: 'twirl#lightblueIcon',
 			groupByCoordinates: false,
-			clusterDisableClickZoom: false,
-			options:{
-				openBalloonOnClick: false
-			}
+			clusterDisableClickZoom: true,
+	        clusterOpenBalloonOnClick: true,
+	        clusterBalloonContentLayout: 'cluster#balloonCarousel',
+	        clusterBalloonItemContentLayout: customItemContentLayout,
+	        clusterBalloonPanelMaxMapArea: 0,
+	        clusterBalloonContentLayoutWidth: 200,
+	        clusterBalloonContentLayoutHeight: 130,
+	        clusterBalloonPagerSize: 5
 		});
 
 		return init;

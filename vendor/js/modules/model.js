@@ -269,9 +269,9 @@ let model = {
 					}, 
 					"properties": {
 						"addres": addres || "",
-						"name": arr[i].name,
-						"balloonContent": arr[i].text,  
-						"hintContent": arr[i].place
+						"balloonContentFooter": arr[i].name,
+						"balloonContentBody": arr[i].text,  
+						"balloonContentHeader": arr[i].place
 					}
 				}			
 			}
