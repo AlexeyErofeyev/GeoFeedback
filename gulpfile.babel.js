@@ -57,6 +57,12 @@ gulp.task('stylus',() => {
     .pipe(gulp.dest('./app/css/'));
 });
 //CSS
+//Fonts
+gulp.task('fonts',() => {
+    gulp.src('./vendor/css/Fonts/*')
+    .pipe(gulp.dest('./app//css/fonts/'));
+});
+//Fonts
 
 //JavaScript 
 gulp.task('js',() => {
@@ -103,4 +109,4 @@ gulp.task('server',() => {
 
 
 
-gulp.task('default',['html','stylus','js','imagemin','watch','server']);
+gulp.task('default',['html','stylus','js','imagemin','fonts','watch','server']);
